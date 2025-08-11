@@ -1,0 +1,23 @@
+name: Exportar Data Clip para Drive
+
+on:
+  schedule:
+    - cron: "5 5 * * *"   # 05:05 UTC = 02:05 America/Sao_Paulo
+  workflow_dispatch:
+
+jobs:
+  exportar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: |
+          python -m pip install --upgrade pip
+          pip install requests google-api-python-client google-auth google-auth-httplib2
+      - env:
+          DATA_CLIP_CSV_URL: ${{ secrets.DATA_CLIP_CSV_URL }}
+          GDRIVE_FOLDER_ID: ${{ secrets.GDRIVE_FOLDER_ID }}
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+        run: python exportar_dataclip_para_drive.py
